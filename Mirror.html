@@ -1,0 +1,270 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="Point.js"></script>
+    <title></title>
+</head>
+<body>
+    <canvas id="canvas" style="border:dotted" width="700" height="600"></canvas>
+
+        <script>
+
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+            var width = canvas.width;
+            var height = canvas.height;
+            var points = [];
+            var current = null;
+            var Lcurrent = null;
+            var index;
+            var flag = false;
+            points[1] = new Point(420,600);
+            points[2] = new Point(135,135);
+            points[3] = new Point(15,15);
+            points[4] = new Point(15,130);
+            points[5] = new Point(100,130);
+            points[6] = new Point();
+            points[7] = new Point();
+            points[8] = new Point();
+
+            
+
+            function Init(ctx) {
+                ///<param name="ctx" type="CanvasRenderingContext2D"/>
+
+                canvas.width = canvas.width;
+
+                ctx.beginPath();
+                ctx.moveTo(0, height/2);
+                ctx.lineTo(width, height / 2);
+                ctx.moveTo(width/2, height);
+                ctx.lineTo(width/2, 0);
+                ctx.lineWidth = 1;
+                ctx.closePath()
+                ctx.stroke();
+                ctx.fill();
+
+                
+
+
+            }
+
+
+            (function Update() {
+                requestAnimationFrame(Update);
+                Init(ctx);
+
+
+                ////////////////////////////
+
+                
+
+                
+
+
+                    
+
+            
+
+            
+
+
+
+
+
+
+                ////////////////////////////
+
+                ctx.beginPath()
+                ctx.moveTo(points[1].x, points[1].y);
+                ctx.lineTo(points[2].x, points[2].y);
+                ctx.lineWidth = 5;
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+
+
+                ctx.beginPath()
+                ctx.moveTo(points[3].x, points[3].y);
+                ctx.lineTo(points[4].x, points[4].y);
+                ctx.lineTo(points[5].x, points[5].y);
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = "#0000FF";
+                ctx.closePath();
+                ctx.stroke();
+                
+                
+                ctx.beginPath()
+                ctx.moveTo(points[8].x, points[8].y);
+                ctx.lineTo(points[7].x, points[7].y);
+                ctx.lineTo(points[6].x, points[6].y);
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = "#FF0000";
+                ctx.closePath();
+                ctx.stroke();
+                
+               
+
+                for (var i = 1; i < points.length; i++) {
+                    points[i].Draw(ctx);
+                }
+            })();
+
+            
+
+            canvas.onmousedown = function (e) {
+
+
+                for (var i = 1; i < 3; i++) {
+                    
+                    if (points[i].IsMouseOver(e.offsetX, e.offsetY)) {
+                        Lcurrent = points[i];
+                    }
+                    }
+
+                for (var i = 3; i < 6; i++) {
+                    
+                    if (points[i].IsMouseOver(e.offsetX , e.offsetY)) {
+                        current = points[i];
+                        
+                        switch (i)
+                        {
+                            case 3:
+                                { index = 8; } break;
+                            case 4:
+                                { index = 7; } break;
+                            case 5:
+                                { index = 6; } break;
+                            //case 8:
+                            //    { index = 3; } break;
+                            //case 7:
+                            //    { index = 4; } break;
+                            //case 6:
+                            //    { index = 5; } break;
+                            
+
+                        }
+                    }
+
+                    if (flag) {
+                        console.log(e.offsetX);
+                        console.log(e.offsetY);
+                    }
+                }
+            }
+            onkeydown = function (e) {
+
+                switch (e.key) {
+
+                    case 'a':
+                        {
+                            flag = true;
+                        }
+
+                        break;
+                }
+            }
+            onkeyup = function (e) {
+
+                switch (e.key) {
+
+                    case 'a':
+                        {
+                            flag = false;
+                        }
+
+                        break;
+                }
+            }
+            canvas.onmouseup = function () {
+                current = null;
+                Lcurrent = null;
+            }
+            canvas.onmousemove = function (e) {
+
+
+                if (current != null) {
+
+                    current.x = e.offsetX;
+                    current.y = e.offsetY;
+
+                    var m1, m2, c1, c2, Onlinex, Onliney, r;
+                    var newX, newY, theta;
+
+                    m1 = ((points[1].y - points[2].y) / (points[1].x - points[2].x));
+
+                    m2 = -1 / m1;
+
+                    c1 = points[1].y - m1 * points[1].x;
+
+                    c2 = current.y - m2 * current.x;
+
+                    Onlinex = (c2 - c1) / (m1 - m2);
+
+                    Onliney = m2 * Onlinex + c2;
+
+                    if (points[2].y == points[1].y) {
+                        //debugger;
+                        console.log("***********");
+                        Onlinex = current.x;
+                        Onliney = points[2].y;
+
+                        var X_ = Onlinex - current.x;
+                        var Y_ = Math.abs(Onliney - current.y);
+
+                        r = Math.sqrt((X_ * X_) + (Y_ * Y_));
+
+
+                        newX = Onlinex;
+
+                        newY = Onliney + r;
+                    }
+
+                    else if (points[2].x == points[1].x) {
+
+                        Onliney = current.y;
+                        Onlinex = points[2].x;
+
+                        var X_ = Onlinex - current.x;
+                        var Y_ = Onliney - current.y;
+
+                        r = Math.sqrt((X_ * X_) + (Y_ * Y_));
+                        var angle = Math.atan(m2);
+
+                        newX = Onlinex + r * Math.cos(angle);
+
+                        newY = Onliney + r * Math.sin(angle);
+
+                    }
+
+                    else {
+                        var X_ = Onlinex - current.x;
+                        var Y_ = Onliney - current.y;
+
+                        r = Math.sqrt((X_ * X_) + (Y_ * Y_));
+                        var angle = Math.atan(m2);
+
+                        newX = Onlinex + r * Math.cos(angle);
+
+                        newY = Onliney + r * Math.sin(angle);
+                    }
+
+                    points[index].x = newX;
+                    points[index].y = newY;
+                }
+
+                else if (Lcurrent != null) {
+                    Lcurrent.x = e.offsetX;
+                    Lcurrent.y = e.offsetY;
+                }
+
+                
+            }
+
+
+
+         </script>
+
+</body>
+</html>
